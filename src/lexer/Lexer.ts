@@ -1,52 +1,55 @@
 import Token, {TokenKind} from "./Token";
 
+class LexerRegExpCtl {
+    public reg_exp_kind: Record<TokenKind, RegExp> = {
+        [TokenKind.TOKEN_DEFAULT]: /./,
+        [TokenKind.TOKEN_INT]: /\d+/,
+        [TokenKind.TOKEN_EOF]: /./,
+        [TokenKind.TOKEN_NEW_LINE]: /\\n/,
+        [TokenKind.TOKEN_KEYWORD]: /./,
+        [TokenKind.TOKEN_SEMI]: /;/,
+        [TokenKind.TOKEN_COLON]: /:/,
+        [TokenKind.TOKEN_PLUS]: /\+/,
+        [TokenKind.TOKEN_MINUS]: /-/,
+        [TokenKind.TOKEN_MULTIPLY]: /\*/,
+        [TokenKind.TOKEN_DIVIDE]: /\\+/,
+        [TokenKind.TOKEN_ASSIGN]: /=/,
+    }
+}
+
 export default class Lexer {
     public stream: string
     public position: number = 0;
     public nextPosition: number = 1;
     public token: Token;
-    static interns: {[str: string]: String} = {};
-
-    #int_reg: RegExp = /\d+/;
-    #semi_reg: RegExp = /;+/;
-    #colon_reg: RegExp = /:+/;
-    #plus_reg: RegExp = /\++/;
-    #minus_reg: RegExp = /-+/;
-    #multiply_reg: RegExp = /\*+/;
-    #divide_reg: RegExp = /\\+/;
-    #assign_reg: RegExp = /=+/;
+    static interns: Record<string, String> = {};
+    #regexpctl: LexerRegExpCtl = new LexerRegExpCtl();
 
     constructor(stream: string) {
         this.stream = stream;
-        this.position = 0;
-        this.nextPosition = 1;
         this.token = this.next_token();
     }
 
     next_token(): Token {
+        // @ts-ignore
         let literal: string = this.stream[this.position];
-        let tokenKind: TokenKind = TokenKind.TOKEN_DEFAULT;
+        if (!literal) {
+            return new Token(TokenKind.TOKEN_EOF, "");
+        }
 
         if (this.#is_number()) {
             return new Token(TokenKind.TOKEN_INT, this.#read_number())
-        } else if (this.#semi_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_SEMI;
-        } else if (this.#colon_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_COLON;
-        } else if (this.#plus_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_PLUS;
-        } else if (this.#minus_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_MINUS;
-        } else if (this.#multiply_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_MULTIPLY;
-        } else if (this.#divide_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_DIVIDE;
-        } else if (this.#assign_reg.test(literal)) {
-            tokenKind = TokenKind.TOKEN_ASSIGN;
-        } // ...
+        }
+
+        for (const [kind, regexp] of Object.entries(this.#regexpctl.reg_exp_kind)) {
+            if (regexp.test(literal)) {
+                this.#next_position();
+                return new Token(kind as TokenKind, literal);
+            }
+        }
 
         this.#next_position();
-        return new Token(tokenKind, literal)
+        return new Token(TokenKind.TOKEN_DEFAULT, literal)
     }
 
     #next_position() {
@@ -55,7 +58,10 @@ export default class Lexer {
     }
 
     #is_number(): boolean {
-        return this.#int_reg.test(this.stream[this.position]);
+        return this.#regexpctl.reg_exp_kind[TokenKind.TOKEN_INT].test(
+            // @ts-ignore
+            this.stream[this.position]
+        );
     }
 
     #read_number() {
