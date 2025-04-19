@@ -1,7 +1,6 @@
-import Lexer from "../lexer/Lexer";
 import Token, {TokenKind} from "../lexer/Token";
 
-const tests = [
+export default [
     {
         input: "1",
         expect: [
@@ -10,42 +9,77 @@ const tests = [
         ],
     },
     {
-        input: "   1  = t",
+        input: "   12  = t",
         expect: [
-            new Token(TokenKind.TOKEN_INT, "1"),
+            new Token(TokenKind.TOKEN_INT, "12"),
             new Token(TokenKind.TOKEN_ASSIGN, "="),
-            new Token(TokenKind.TOKEN_DEFAULT, "t"),
+            new Token(TokenKind.TOKEN_IDENTIFIER, "t"),
+            new Token(TokenKind.TOKEN_EOF, ""),
+        ],
+    },
+    {
+        input: "22 + 22 ~ 44",
+        expect: [
+            new Token(TokenKind.TOKEN_INT, "22"),
+            new Token(TokenKind.TOKEN_PLUS, "+"),
+            new Token(TokenKind.TOKEN_INT, "22"),
+            new Token(TokenKind.TOKEN_EQUAL, "~"),
+            new Token(TokenKind.TOKEN_INT, "44"),
+            new Token(TokenKind.TOKEN_EOF, ""),
+        ],
+    },
+    {
+        input: "num = 33;",
+        expect: [
+            new Token(TokenKind.TOKEN_IDENTIFIER, "num"),
+            new Token(TokenKind.TOKEN_ASSIGN, "="),
+            new Token(TokenKind.TOKEN_INT, "33"),
+            new Token(TokenKind.TOKEN_SEMI, ";"),
+            new Token(TokenKind.TOKEN_EOF, ""),
+        ],
+    },
+    {
+        input: "num => 33;",
+        expect: [
+            new Token(TokenKind.TOKEN_IDENTIFIER, "num"),
+            new Token(TokenKind.TOKEN_LAMBDA, "=>"),
+            new Token(TokenKind.TOKEN_INT, "33"),
+            new Token(TokenKind.TOKEN_SEMI, ";"),
+            new Token(TokenKind.TOKEN_EOF, ""),
+        ],
+    },
+    {
+        input: "int while = 33; if!!",
+        expect: [
+            new Token(TokenKind.TOKEN_TYPE, "int"),
+            new Token(TokenKind.TOKEN_KEYWORD, "while"),
+            new Token(TokenKind.TOKEN_ASSIGN, "="),
+            new Token(TokenKind.TOKEN_INT, "33"),
+            new Token(TokenKind.TOKEN_SEMI, ";"),
+            new Token(TokenKind.TOKEN_KEYWORD, "if"),
+            new Token(TokenKind.TOKEN_DEFAULT, "!"),
+            new Token(TokenKind.TOKEN_DEFAULT, "!"),
+            new Token(TokenKind.TOKEN_EOF, ""),
+        ],
+    },
+    {
+        input: `
+            int x = 42;
+            x + 3 ~ 45;
+        `,
+        expect: [
+            new Token(TokenKind.TOKEN_TYPE, "int"),
+            new Token(TokenKind.TOKEN_IDENTIFIER, "x"),
+            new Token(TokenKind.TOKEN_ASSIGN, "="),
+            new Token(TokenKind.TOKEN_INT, "42"),
+            new Token(TokenKind.TOKEN_SEMI, ";"),
+            new Token(TokenKind.TOKEN_IDENTIFIER, "x"),
+            new Token(TokenKind.TOKEN_PLUS, "+"),
+            new Token(TokenKind.TOKEN_INT, "3"),
+            new Token(TokenKind.TOKEN_EQUAL, "~"),
+            new Token(TokenKind.TOKEN_INT, "45"),
+            new Token(TokenKind.TOKEN_SEMI, ";"),
             new Token(TokenKind.TOKEN_EOF, ""),
         ],
     },
 ];
-
-tests.forEach((testCase, n) => {
-    console.log(`--- Test ${n + 1} ---`);
-
-    try {
-        const lexer: Lexer = new Lexer(testCase.input);
-        let i = 0;
-        let nextToken: Token = new Token(TokenKind.TOKEN_DEFAULT, "");
-
-        do {
-            nextToken = lexer.next_token();
-            console.log(
-                nextToken.type,
-                nextToken.literal,
-                Lexer.token_cmp(nextToken, testCase.expect[i]),
-            );
-
-            if (!Lexer.token_cmp(nextToken, testCase.expect[i])) {
-                throw new Error();
-            }
-
-            i++;
-        } while (nextToken.type !== TokenKind.TOKEN_EOF);
-    } catch (e) {
-        console.log(`test failed`);
-        return;
-    }
-
-    console.log(`test passed\n\n`)
-});
