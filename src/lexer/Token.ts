@@ -2,7 +2,7 @@ export enum TokenKind {
     TOKEN_DEFAULT = "default",
     TOKEN_INT = "int",
     TOKEN_EOF = "eof",
-    TOKEN_NEW_LINE = "new_line",
+    TOKEN_WHITESPACE = "whitespace",
     TOKEN_KEYWORD = "keyword",
     TOKEN_SEMI = "semi",
     TOKEN_COLON = "colon",

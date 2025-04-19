@@ -1,0 +1,12 @@
+{
+  "name": "jspp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc --project tsconfig.json",
+    "test:lexer": "node build/test/lexer.test.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
