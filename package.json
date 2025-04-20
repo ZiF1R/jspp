@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "tsc --project tsconfig.json",
+    "test": "node build/test/tests.js"
   },
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^5.8.3"
-  }
+  "license": "ISC"
 }
