@@ -29,7 +29,7 @@ export default class Lexer {
     public stream: string
     public position: number = 0;
     public nextPosition: number = 1;
-    static interns: Record<string, string> = {};
+    public interns: Record<string, string> = {};
     #regexpctl: LexerRegExpCtl = new LexerRegExpCtl();
 
     constructor(stream: string) {
@@ -38,7 +38,7 @@ export default class Lexer {
 
     next_token(): Token {
         if (this.position >= this.stream.length) {
-            return new Token(TokenKind.TOKEN_EOF, "");
+            return new Token(TokenKind.TOKEN_EOF, "", this.stream.length, this.stream.length);
         }
 
         const remaining = this.stream.slice(this.position);
@@ -50,7 +50,8 @@ export default class Lexer {
                 continue;
             }
 
-            let literal = match[0];
+            let literal = this.#str_intern(match[0]);
+            let startPos = this.position;
             this.#next_position(literal.length);
 
             switch (kind) {
@@ -59,22 +60,22 @@ export default class Lexer {
 
                 case (TokenKind.TOKEN_IDENTIFIER):
                     if (literal in Types) {
-                        return new Token(TokenKind.TOKEN_TYPE, literal);
+                        return new Token(TokenKind.TOKEN_TYPE, literal, startPos, this.position);
                     } else if (literal in Keywords) {
-                        return new Token(TokenKind.TOKEN_KEYWORD, literal);
+                        return new Token(TokenKind.TOKEN_KEYWORD, literal, startPos, this.position);
                     }
-                    return new Token(kind as TokenKind, literal);
+                    return new Token(kind as TokenKind, literal, startPos, this.position);
 
                 default:
-                    return new Token(kind as TokenKind, literal);
+                    return new Token(kind as TokenKind, literal, startPos, this.position);
             }
-
         }
 
-        let literal = this.stream[this.position];
+        let literal = this.#str_intern(this.stream[this.position]);
+        let startPos = this.position;
         this.#next_position();
 
-        return new Token(TokenKind.TOKEN_DEFAULT, literal);
+        return new Token(TokenKind.TOKEN_DEFAULT, literal, startPos, this.position);
     }
 
     #next_position(n: number = 1) {
@@ -82,47 +83,11 @@ export default class Lexer {
         this.nextPosition = this.position + 1;
     }
 
-
-    // Deprecated methods
-    //
-    // #is_token_kind_type(token_kind: TokenKind): boolean {
-    //     if (!this.stream[this.position]) {
-    //         return false;
-    //     }
-    //     return this.#regexpctl.reg_exp_kind[token_kind].test(
-    //         this.stream[this.position]
-    //     );
-    // }
-    //
-    // #read_token_sequence(token_kind: TokenKind): string {
-    //     let start = this.position;
-    //
-    //     while (this.#is_token_kind_type(token_kind)) {
-    //         this.#next_position();
-    //     }
-    //
-    //     return this.stream.substring(start, this.position)
-    // }
-    //
-    // #look_forward(): string | null {
-    //     if (this.nextPosition >= this.stream.length) {
-    //         return null;
-    //     }
-    //
-    //     return this.stream[this.nextPosition];
-    // }
-    //
-    // #skip_whitespace(): void {
-    //     while(this.#is_token_kind_type(TokenKind.TOKEN_WHITESPACE)) {
-    //         this.#next_position();
-    //     }
-    // }
-
     #str_intern(str: string): string {
-        if (str in Lexer.interns) {
-            return Lexer.interns[str];
+        if (str in this.interns) {
+            return this.interns[str];
         } else {
-            Lexer.interns[str] = str;
+            this.interns[str] = str;
             return str;
         }
     }

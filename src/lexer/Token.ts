@@ -20,11 +20,13 @@ export enum TokenKind {
 export default class Token {
     public type: TokenKind;
     public literal: string;
-    // public start: number;
-    // public end: number;
+    public start: number;
+    public end: number;
 
-    constructor(type: TokenKind, literal: string) {
+    constructor(type: TokenKind, literal: string, start: number = 0, end: number = 0) {
         this.type = type;
         this.literal = literal;
+        this.start = start;
+        this.end = end;
     }
 }
