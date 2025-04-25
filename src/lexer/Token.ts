@@ -9,8 +9,25 @@ export enum TokenKind {
     TOKEN_FLOAT,
     TOKEN_INT,
     TOKEN_IDENTIFIER,
+    TOKEN_AND_AND,
+    TOKEN_OR_OR,
     TOKEN_LAMBDA,
+    TOKEN_ADD_ASSIGN,
+    TOKEN_SUB_ASSIGN,
+    TOKEN_MUL_ASSIGN,
+    TOKEN_DIV_ASSIGN,
+    TOKEN_OR_ASSIGN,
+    TOKEN_AND_ASSIGN,
+    TOKEN_XOR_ASSIGN,
+    TOKEN_MOD_ASSIGN,
+    TOKEN_LSHIFT_ASSIGN,
+    TOKEN_RSHIFT_ASSIGN,
     TOKEN_EQUAL,
+    TOKEN_NOT_EQUAL,
+    TOKEN_LESS,
+    TOKEN_LESS_EQUAL,
+    TOKEN_MORE,
+    TOKEN_MORE_EQUAL,
     TOKEN_ASSIGN,
     TOKEN_INCREMENT_PREFIX,
     TOKEN_INCREMENT_POSTFIX,
@@ -20,6 +37,12 @@ export enum TokenKind {
     TOKEN_MINUS,
     TOKEN_MULTIPLY,
     TOKEN_DIVIDE,
+    TOKEN_OR,
+    TOKEN_AND,
+    TOKEN_XOR,
+    TOKEN_MOD,
+    TOKEN_LSHIFT,
+    TOKEN_RSHIFT,
     TOKEN_SEMI,
     TOKEN_COLON,
     TOKEN_LINE_TERMINATOR,
@@ -32,8 +55,6 @@ export enum TokenKind {
     TOKEN_RBRACE,
     TOKEN_LBRACKET,
     TOKEN_RBRACKET,
-    TOKEN_AND_AND,
-    TOKEN_OR_OR,
 
     TOKEN_KEYWORD,
     TOKEN_TYPE,
@@ -41,7 +62,7 @@ export enum TokenKind {
     __LENGTH__
 }
 
-export const TokenKindNames: Record<TokenKind, string> = {
+export const TokenKindNames: Record<TokenKind, string> = Object.freeze({
     [TokenKind.TOKEN_DEFAULT]: str_intern("default"),
     [TokenKind.TOKEN_INT]: str_intern("int"),
     [TokenKind.TOKEN_BINARY]: str_intern("binary"),
@@ -52,8 +73,23 @@ export const TokenKindNames: Record<TokenKind, string> = {
     [TokenKind.TOKEN_LINE_TERMINATOR]: str_intern("line_terminator"),
     [TokenKind.TOKEN_WHITESPACE]: str_intern("whitespace"),
     [TokenKind.TOKEN_EQUAL]: str_intern("equal"),
+    [TokenKind.TOKEN_NOT_EQUAL]: str_intern("not_equal"),
+    [TokenKind.TOKEN_LESS]: str_intern("less"),
+    [TokenKind.TOKEN_LESS_EQUAL]: str_intern("less_equal"),
+    [TokenKind.TOKEN_MORE]: str_intern("more"),
+    [TokenKind.TOKEN_MORE_EQUAL]: str_intern("more_equal"),
     [TokenKind.TOKEN_IDENTIFIER]: str_intern("identifier"),
     [TokenKind.TOKEN_LAMBDA]: str_intern("lambda"),
+    [TokenKind.TOKEN_ADD_ASSIGN]: str_intern("add_assign"),
+    [TokenKind.TOKEN_SUB_ASSIGN]: str_intern("sub_assign"),
+    [TokenKind.TOKEN_MUL_ASSIGN]: str_intern("mul_assign"),
+    [TokenKind.TOKEN_DIV_ASSIGN]: str_intern("div_assign"),
+    [TokenKind.TOKEN_OR_ASSIGN]: str_intern("or_assign"),
+    [TokenKind.TOKEN_AND_ASSIGN]: str_intern("and_assign"),
+    [TokenKind.TOKEN_XOR_ASSIGN]: str_intern("xor_assign"),
+    [TokenKind.TOKEN_MOD_ASSIGN]: str_intern("mod_assign"),
+    [TokenKind.TOKEN_LSHIFT_ASSIGN]: str_intern("lshift_assign"),
+    [TokenKind.TOKEN_RSHIFT_ASSIGN]: str_intern("rshift_assign"),
     [TokenKind.TOKEN_KEYWORD]: str_intern("keyword"),
     [TokenKind.TOKEN_TYPE]: str_intern("type"),
     [TokenKind.TOKEN_SEMI]: str_intern("semi"),
@@ -66,6 +102,12 @@ export const TokenKindNames: Record<TokenKind, string> = {
     [TokenKind.TOKEN_MINUS]: str_intern("minus"),
     [TokenKind.TOKEN_MULTIPLY]: str_intern("multiply"),
     [TokenKind.TOKEN_DIVIDE]: str_intern("divide"),
+    [TokenKind.TOKEN_OR]: str_intern("or"),
+    [TokenKind.TOKEN_AND]: str_intern("and"),
+    [TokenKind.TOKEN_XOR]: str_intern("xor"),
+    [TokenKind.TOKEN_MOD]: str_intern("mod"),
+    [TokenKind.TOKEN_LSHIFT]: str_intern("lshift"),
+    [TokenKind.TOKEN_RSHIFT]: str_intern("rshift"),
     [TokenKind.TOKEN_ASSIGN]: str_intern("assign"),
     [TokenKind.TOKEN_INLINE_COMMENT]: str_intern("inline_comment"),
     [TokenKind.TOKEN_BLOCK_COMMENT]: str_intern("block_comment"),
@@ -79,7 +121,7 @@ export const TokenKindNames: Record<TokenKind, string> = {
     [TokenKind.TOKEN_OR_OR]: str_intern("or_or"),
 
     [TokenKind.__LENGTH__]: str_intern("__LENGTH__"),
-}
+});
 
 export function token_kind_name(kind: TokenKind): string {
     if (kind < TokenKind.__LENGTH__) {
@@ -100,6 +142,10 @@ export default class Token {
         this.literal = literal;
         this.start = start;
         this.end = end;
+    }
+
+    static token_cmp(t1: Token, t2: Token): boolean {
+        return t1.literal === t2.literal && t1.type === t2.type;
     }
 
     humanize_type() {

@@ -108,7 +108,7 @@ export default [
             new Token(TokenKind.TOKEN_RBRACE, "}"),
             new Token(TokenKind.TOKEN_OR_OR, "||"),
             new Token(TokenKind.TOKEN_INT, "3"),
-            new Token(TokenKind.TOKEN_DEFAULT, "|"),
+            new Token(TokenKind.TOKEN_OR, "|"),
             new Token(TokenKind.TOKEN_EOF, ""),
         ],
     },

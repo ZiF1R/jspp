@@ -3,15 +3,30 @@ import Keywords from "./Keywords";
 import Types from "./Types";
 import {str_intern} from "./str_intern";
 
-const TOKEN_REGEX: Record<TokenKind, RegExp> = {
-    [TokenKind.TOKEN_LAMBDA]: /^=>/,
+const TOKEN_REGEX: Record<TokenKind, RegExp> = Object.freeze({
     [TokenKind.TOKEN_BINARY]: /^0b[01]+(?:\b|$)/,
     [TokenKind.TOKEN_HEX]: /^0h[0-9A-Fa-f]+(?:\b|$)/,
     [TokenKind.TOKEN_OCTAL]: /^0o[0-7]+(?:\b|$)/,
     [TokenKind.TOKEN_FLOAT]: /^[\-+]?\d+\.\d+(?:\b|$)/,
     [TokenKind.TOKEN_INT]: /^[\-+]?\d+(?:\b|$)/,
     [TokenKind.TOKEN_IDENTIFIER]: /^[a-zA-Z_]\w*(?=\b|$)/,
+    [TokenKind.TOKEN_LAMBDA]: /^=>/,
+    [TokenKind.TOKEN_ADD_ASSIGN]: /^\+=/,
+    [TokenKind.TOKEN_SUB_ASSIGN]: /^-=/,
+    [TokenKind.TOKEN_MUL_ASSIGN]: /^\*=/,
+    [TokenKind.TOKEN_DIV_ASSIGN]: /^\/=/,
+    [TokenKind.TOKEN_OR_ASSIGN]: /^\|=/,
+    [TokenKind.TOKEN_AND_ASSIGN]: /^&=/,
+    [TokenKind.TOKEN_XOR_ASSIGN]: /^\^=/,
+    [TokenKind.TOKEN_MOD_ASSIGN]: /^%=/,
+    [TokenKind.TOKEN_LSHIFT_ASSIGN]: /^<<=/,
+    [TokenKind.TOKEN_RSHIFT_ASSIGN]: /^>>=/,
     [TokenKind.TOKEN_EQUAL]: /^==/,
+    [TokenKind.TOKEN_NOT_EQUAL]: /^<>/,
+    [TokenKind.TOKEN_LESS]: /^</,
+    [TokenKind.TOKEN_LESS_EQUAL]: /^</,
+    [TokenKind.TOKEN_MORE]: /^>/,
+    [TokenKind.TOKEN_MORE_EQUAL]: /^>=/,
     [TokenKind.TOKEN_ASSIGN]: /^=(?=[^=])/,
     [TokenKind.TOKEN_INCREMENT_PREFIX]: /^\+\+[a-zA-Z_]\w*/,
     [TokenKind.TOKEN_INCREMENT_POSTFIX]: /^[a-zA-Z_]\w*\+\+/,
@@ -21,6 +36,12 @@ const TOKEN_REGEX: Record<TokenKind, RegExp> = {
     [TokenKind.TOKEN_MINUS]: /^-/,
     [TokenKind.TOKEN_MULTIPLY]: /^\*/,
     [TokenKind.TOKEN_DIVIDE]: /^\//,
+    [TokenKind.TOKEN_OR]: /^\|/,
+    [TokenKind.TOKEN_AND]: /^&/,
+    [TokenKind.TOKEN_XOR]: /^\^/,
+    [TokenKind.TOKEN_MOD]: /^%/,
+    [TokenKind.TOKEN_LSHIFT]: /^<</,
+    [TokenKind.TOKEN_RSHIFT]: /^>>/,
     [TokenKind.TOKEN_SEMI]: /^;/,
     [TokenKind.TOKEN_COLON]: /^:/,
     [TokenKind.TOKEN_LINE_TERMINATOR]: /^[\n\r]+/,
@@ -42,7 +63,7 @@ const TOKEN_REGEX: Record<TokenKind, RegExp> = {
     [TokenKind.TOKEN_DEFAULT]: /.^/,
     [TokenKind.TOKEN_EOF]: /.^/,
     [TokenKind.__LENGTH__]: /.^/,
-}
+});
 
 export default class Lexer {
     public stream: string
@@ -98,9 +119,5 @@ export default class Lexer {
     #next_position(n: number = 1) {
         this.position += n;
         this.nextPosition = this.position + 1;
-    }
-
-    static token_cmp(t1: Token, t2: Token): boolean {
-        return t1.literal === t2.literal && t1.type === t2.type;
     }
 }

@@ -22,7 +22,7 @@ const lexer_tests = fn_time(() => {
 
             do {
                 nextToken = lexer.next_token();
-                let cmp = Lexer.token_cmp(nextToken, testCase.expect[i]);
+                let cmp = Token.token_cmp(nextToken, testCase.expect[i]);
 
                 if (!cmp) {
                     console.log(`\n--- Test ${n + 1} ---`)
