@@ -11,9 +11,10 @@ const fn_time = (fn: Function) => () => {
 }
 
 const lexer_tests = fn_time(() => {
-    lexerTests.forEach((testCase, n) => {
-        console.log(`--- Test ${n + 1} ---`);
+    console.log("--- Lexer ---");
+    let errors: boolean = false;
 
+    lexerTests.forEach((testCase, n) => {
         try {
             const lexer: Lexer = new Lexer(testCase.input);
             let i = 0;
@@ -21,22 +22,29 @@ const lexer_tests = fn_time(() => {
 
             do {
                 nextToken = lexer.next_token();
-                let cmp = Lexer.token_cmp(nextToken, testCase.expect[i]);
-                console.log(nextToken, cmp);
+                let cmp = Token.token_cmp(nextToken, testCase.expect[i]);
 
                 if (!cmp) {
+                    console.log(`\n--- Test ${n + 1} ---`)
+                    console.log('failed: ', nextToken, testCase.expect[i]);
                     throw new Error();
+                } else {
+                    // console.log('success: ', nextToken.humanize_type());
                 }
 
                 i++;
             } while (nextToken.type !== TokenKind.TOKEN_EOF);
         } catch (e) {
-            console.log(`test failed`);
-            return;
+            errors = true;
+            return console.log('\x1b[31m%s\x1b[0m', `test failed\n`);
         }
 
-        console.log(`test passed\n\n`)
+        // console.log('\x1b[32m%s\x1b[0m', `test passed\n`);
     });
+
+    if (!errors) {
+        console.log('\x1b[32m%s\x1b[0m', `test passed\n`);
+    }
 });
 
 lexer_tests();

@@ -9,5 +9,53 @@ export default {
     "export": TokenKind.TOKEN_KEYWORD,
     "import": TokenKind.TOKEN_KEYWORD,
     "class": TokenKind.TOKEN_KEYWORD,
+    "static": TokenKind.TOKEN_KEYWORD,
+    "public": TokenKind.TOKEN_KEYWORD,
+    "private": TokenKind.TOKEN_KEYWORD,
+    "delete": TokenKind.TOKEN_KEYWORD,
+    "case": TokenKind.TOKEN_KEYWORD,
+    "const": TokenKind.TOKEN_KEYWORD,
+    "break": TokenKind.TOKEN_KEYWORD,
+    "catch": TokenKind.TOKEN_KEYWORD,
+    "do": TokenKind.TOKEN_KEYWORD,
+    "false": TokenKind.TOKEN_KEYWORD,
+    "true": TokenKind.TOKEN_KEYWORD,
+    "for": TokenKind.TOKEN_KEYWORD,
+    "default": TokenKind.TOKEN_KEYWORD,
 } as Record<string, TokenKind>;
 
+// break
+// case
+// catch
+// class
+// const
+// continue
+// debugger
+// default
+// delete
+// do
+// else
+// export
+// extends
+// false
+// finally
+// for
+// function
+// if
+// import
+// in
+// instanceof
+// new
+// null
+// return
+// super
+// switch
+// this
+// throw
+// true
+// try
+// typeof
+// var
+// void
+// while
+// with
