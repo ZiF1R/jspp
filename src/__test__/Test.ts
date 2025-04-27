@@ -1,11 +1,11 @@
-export interface ITest<T> {
+export type TTest<T> = {
     input: string;
     expect: T[];
 }
 
 export interface ICTest<T = any> {
-    name: string;
-    tests: ITest<T>[];
+    readonly name: string;
+    readonly tests: TTest<T>[];
     processAll(): boolean;
 }
 
@@ -28,13 +28,15 @@ export default class CTest {
         this.tests = tests;
     }
 
-    processAll() {
+    processAll(): boolean {
+        let errors = false;
         for (const test of this.tests) {
             console.log(`--- ${test.name} ---`);
             const initTests = fn_time<boolean>(test.processAll.bind(test));
             const withErrors: boolean = initTests();
 
             if (withErrors) {
+                errors = true;
                 console.log('\x1b[31m%s\x1b[0m', `Test failed`);
             } else {
                 console.log('\x1b[32m%s\x1b[0m', `Test passed`);
@@ -42,5 +44,7 @@ export default class CTest {
 
             console.log("\n".padStart(test.name.length + 9, "-"));
         }
+
+        return errors;
     }
 }

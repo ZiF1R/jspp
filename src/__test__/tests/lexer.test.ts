@@ -1,8 +1,8 @@
 import Lexer from "../../lexer/Lexer";
 import Token, {TokenKind} from "../../lexer/Token";
-import {ICTest, ITest} from "../Test";
+import {ICTest, TTest} from "../Test";
 
-const lexerTests: ITest<Token>[] = [
+const lexerTests: TTest<Token>[] = [
     {
         input: "1",
         expect: [
@@ -117,8 +117,8 @@ const lexerTests: ITest<Token>[] = [
 ];
 
 class LexerTest implements ICTest<Token> {
-    public name: string = "Lexer";
-    public tests: ITest<Token>[] = lexerTests;
+    readonly name: string = "Lexer";
+    readonly tests: TTest<Token>[] = lexerTests;
 
     public processAll(): boolean {
         let errors: boolean = false;
@@ -135,8 +135,8 @@ class LexerTest implements ICTest<Token> {
                         console.log(`\n  - Test ${n + 1} -`)
                         console.log(
                             "  Failed:\n",
-                            " Expected ->", tokens[i], "\n",
-                            " Got ->", testCase.expect[i],
+                            " Expected ->", testCase.expect[i], "\n",
+                            " Got ->", tokens[i],
                         );
                         throw new Error();
                     }

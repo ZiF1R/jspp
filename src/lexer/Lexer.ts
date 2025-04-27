@@ -117,12 +117,12 @@ export default class Lexer {
         return new Token(TokenKind.TOKEN_DEFAULT, literal, startPos, this.position);
     }
 
-    private next_position(n: number = 1) {
+    private next_position(n: number = 1): void {
         this.position += n;
         this.nextPosition = this.position + 1;
     }
 
-    public processAll() {
+    public processAll(): Token[] {
         let nextToken: Token = new Token(TokenKind.TOKEN_DEFAULT, "");
 
         do {
