@@ -1,6 +1,8 @@
-import Token, {TokenKind} from "../lexer/Token";
+import Lexer from "../../lexer/Lexer";
+import Token, {TokenKind} from "../../lexer/Token";
+import {ICTest, ITest} from "../Test";
 
-export default [
+const lexerTests: ITest<Token>[] = [
     {
         input: "1",
         expect: [
@@ -113,3 +115,39 @@ export default [
         ],
     },
 ];
+
+class LexerTest implements ICTest<Token> {
+    public name: string = "Lexer";
+    public tests: ITest<Token>[] = lexerTests;
+
+    public processAll(): boolean {
+        let errors: boolean = false;
+
+        this.tests.forEach((testCase, n) => {
+            try {
+                const lexer: Lexer = new Lexer(testCase.input);
+                const tokens = lexer.processAll();
+
+                for (let i = 0; i < testCase.expect.length; i++) {
+                    let cmp = Token.token_cmp(tokens[i], testCase.expect[i]);
+
+                    if (!cmp) {
+                        console.log(`\n  - Test ${n + 1} -`)
+                        console.log(
+                            "  Failed:\n",
+                            " Expected ->", tokens[i], "\n",
+                            " Got ->", testCase.expect[i],
+                        );
+                        throw new Error();
+                    }
+                }
+            } catch (e) {
+                return errors = true;
+            }
+        });
+
+        return errors;
+    }
+}
+
+export default new LexerTest();

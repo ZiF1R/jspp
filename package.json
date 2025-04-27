@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc --project tsconfig.json",
-    "test": "node build/test/tests.js"
+    "test": "node build/__test__/index.js"
   },
   "author": "",
   "license": "ISC"
