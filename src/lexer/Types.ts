@@ -1,12 +1,13 @@
 import {TokenKind} from "./Token";
+import StringIntern from "./StringIntern";
 
 export default {
-    "int": TokenKind.TOKEN_TYPE,
-    "uint": TokenKind.TOKEN_TYPE,
-    "float": TokenKind.TOKEN_TYPE,
-    "ufloat": TokenKind.TOKEN_TYPE,
-    "char": TokenKind.TOKEN_TYPE,
-    "string": TokenKind.TOKEN_TYPE,
-    "bool": TokenKind.TOKEN_TYPE,
-    "void": TokenKind.TOKEN_TYPE,
+    [StringIntern.add("int")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("uint")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("float")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("ufloat")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("char")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("string")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("bool")]: TokenKind.TOKEN_TYPE,
+    [StringIntern.add("void")]: TokenKind.TOKEN_TYPE,
 } as Record<string, TokenKind>;

@@ -1,7 +1,7 @@
 import Token, {TokenKind} from "./Token";
 import Keywords from "./Keywords";
 import Types from "./Types";
-import {str_intern} from "./str_intern";
+import StringIntern from "./StringIntern";
 
 const TOKEN_REGEX: Record<TokenKind, RegExp> = Object.freeze({
     [TokenKind.TOKEN_BINARY]: /^0b[01]+(?:\b|$)/,
@@ -9,6 +9,10 @@ const TOKEN_REGEX: Record<TokenKind, RegExp> = Object.freeze({
     [TokenKind.TOKEN_OCTAL]: /^0o[0-7]+(?:\b|$)/,
     [TokenKind.TOKEN_FLOAT]: /^[\-+]?\d+\.\d+(?:\b|$)/,
     [TokenKind.TOKEN_INT]: /^[\-+]?\d+(?:\b|$)/,
+    [TokenKind.TOKEN_INCREMENT_PREFIX]: /^\+\+(?=[a-zA-Z_]\w*)/,
+    [TokenKind.TOKEN_DECREMENT_PREFIX]: /^--(?=[a-zA-Z_]\w*)/,
+    [TokenKind.TOKEN_INCREMENT_POSTFIX]: /^\+\+/,
+    [TokenKind.TOKEN_DECREMENT_POSTFIX]: /^--/,
     [TokenKind.TOKEN_IDENTIFIER]: /^[a-zA-Z_]\w*(?=\b|$)/,
     [TokenKind.TOKEN_LAMBDA]: /^=>/,
     [TokenKind.TOKEN_ADD_ASSIGN]: /^\+=/,
@@ -28,10 +32,6 @@ const TOKEN_REGEX: Record<TokenKind, RegExp> = Object.freeze({
     [TokenKind.TOKEN_MORE]: /^>/,
     [TokenKind.TOKEN_MORE_EQUAL]: /^>=/,
     [TokenKind.TOKEN_ASSIGN]: /^=(?=[^=])/,
-    [TokenKind.TOKEN_INCREMENT_PREFIX]: /^\+\+[a-zA-Z_]\w*/,
-    [TokenKind.TOKEN_INCREMENT_POSTFIX]: /^[a-zA-Z_]\w*\+\+/,
-    [TokenKind.TOKEN_DECREMENT_PREFIX]: /^--[a-zA-Z_]\w*/,
-    [TokenKind.TOKEN_DECREMENT_POSTFIX]: /^[a-zA-Z_]\w*--/,
     [TokenKind.TOKEN_PLUS]: /^\+/,
     [TokenKind.TOKEN_MINUS]: /^-/,
     [TokenKind.TOKEN_MULTIPLY]: /^\*/,
@@ -69,12 +69,13 @@ export default class Lexer {
     public stream: string
     public position: number = 0;
     public nextPosition: number = 1;
+    private tokens: Token[] = [];
 
     constructor(stream: string) {
         this.stream = stream;
     }
 
-    next_token(): Token {
+    public next_token(): Token {
         if (this.position >= this.stream.length) {
             return new Token(TokenKind.TOKEN_EOF, "", this.stream.length, this.stream.length);
         }
@@ -89,9 +90,9 @@ export default class Lexer {
                 continue;
             }
 
-            let literal = str_intern(match[0]);
+            let literal = StringIntern.add(match[0]);
             let startPos = this.position;
-            this.#next_position(literal.length);
+            this.next_position(literal.length);
             switch (kindNum) {
                 case (TokenKind.TOKEN_WHITESPACE):
                     return this.next_token();
@@ -109,15 +110,26 @@ export default class Lexer {
             }
         }
 
-        let literal = str_intern(this.stream[this.position]);
+        let literal = StringIntern.add(this.stream[this.position]);
         let startPos = this.position;
-        this.#next_position();
+        this.next_position();
 
         return new Token(TokenKind.TOKEN_DEFAULT, literal, startPos, this.position);
     }
 
-    #next_position(n: number = 1) {
+    private next_position(n: number = 1) {
         this.position += n;
         this.nextPosition = this.position + 1;
+    }
+
+    public processAll() {
+        let nextToken: Token = new Token(TokenKind.TOKEN_DEFAULT, "");
+
+        do {
+            nextToken = this.next_token();
+            this.tokens.push(nextToken);
+        } while (nextToken.type !== TokenKind.TOKEN_EOF);
+
+        return this.tokens;
     }
 }
